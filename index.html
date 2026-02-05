@@ -3,164 +3,125 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Advanced Admin Dashboard | CapCut Pro</title>
+    <title>CapCut Admin - Final Version</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root { 
-            --bg: #0b0e14; 
-            --sidebar-bg: #0f131a; 
-            --card-bg: #161b22; 
-            --border: #21262d; 
-            --primary: #00d2ff; 
-            --accent: #ff0055; 
-            --text: #94a3b8; 
-            --success: #00ff88; 
-        }
-
-        body { margin: 0; font-family: 'Segoe UI', sans-serif; background: var(--bg); color: white; height: 100vh; display: flex; overflow: hidden; }
-
-        /* ১. লগইন পেজ ডিজাইন */
-        #login-page { 
-            position: fixed; inset: 0; background: radial-gradient(circle at top right, #1e293b, #0b0e14); 
-            display: flex; align-items: center; justify-content: center; z-index: 9999; 
-        }
-        .login-card { 
-            background: var(--card-bg); padding: 40px; border-radius: 20px; width: 340px; 
-            border: 1px solid var(--border); text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-        }
-        .login-card input { 
-            width: 100%; padding: 12px; margin: 10px 0; border-radius: 8px; border: 1px solid var(--border); 
-            background: var(--bg); color: white; box-sizing: border-box; outline: none;
-        }
-        .login-btn { 
-            width: 100%; padding: 12px; background: var(--primary); border: none; border-radius: 8px; 
-            font-weight: bold; cursor: pointer; margin-top: 10px;
-        }
-
-        /* ২. সাইডবার ডিজাইন */
-        .sidebar { 
-            width: 250px; background: var(--sidebar-bg); border-right: 1px solid var(--border); 
-            display: flex; flex-direction: column; transition: 0.3s;
-        }
-        .logo { padding: 25px; font-size: 20px; font-weight: bold; color: var(--accent); display: flex; align-items: center; gap: 10px; }
-        .nav-list { list-style: none; padding: 0 15px; flex: 1; }
-        .nav-item { 
-            padding: 12px 15px; margin-bottom: 5px; border-radius: 10px; cursor: pointer; 
-            display: flex; align-items: center; gap: 12px; color: var(--text); transition: 0.3s; font-size: 14px;
-        }
-        .nav-item.active { background: #1c212c; color: var(--primary); border: 1px solid rgba(0,210,255,0.1); }
-        .nav-item:hover:not(.active) { background: rgba(255,255,255,0.05); color: white; }
-
-        .logout-sec { padding: 20px; border-top: 1px solid var(--border); }
-        .logout-btn { 
-            width: 100%; padding: 10px; border: 1px solid var(--accent); background: transparent; 
-            color: var(--accent); border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
-        }
-
-        /* ৩. মেইন কন্টেন্ট এরিয়া */
-        .main-content { flex: 1; padding: 30px; overflow-y: auto; display: none; }
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; border-bottom: 1px solid var(--border); padding-bottom: 15px; }
+        :root { --bg: #0b0e14; --sidebar: #11141d; --card: #161d29; --primary: #00d2ff; --accent: #00ff88; --text: #94a3b8; --border: #232d3d; }
+        body { background: var(--bg); color: white; font-family: 'Inter', sans-serif; margin: 0; display: flex; height: 100vh; overflow: hidden; }
         
-        .grid { display: grid; grid-template-columns: 1.5fr 1fr; gap: 25px; }
-        .card { background: var(--card-bg); padding: 25px; border-radius: 18px; border: 1px solid var(--border); }
-        .card-title { color: var(--primary); font-weight: bold; margin-bottom: 20px; display: flex; align-items: center; gap: 8px; font-size: 15px; }
+        /* Login Screen Overlay */
+        #loginScreen { position: fixed; inset: 0; background: var(--bg); z-index: 10000; display: flex; justify-content: center; align-items: center; }
+        .login-box { background: var(--card); padding: 40px; border-radius: 20px; width: 350px; text-align: center; border: 1px solid var(--border); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .login-box h2 { color: var(--primary); margin-bottom: 25px; }
+        .login-box input { width: 100%; background: #0f1722; border: 1px solid var(--border); padding: 14px; border-radius: 12px; color: white; margin-bottom: 15px; outline: none; box-sizing: border-box; }
+        
+        /* Sidebar */
+        .sidebar { width: 260px; background: var(--sidebar); height: 100vh; padding: 25px; border-right: 1px solid var(--border); position: fixed; }
+        .logo { color: #ff0055; font-weight: bold; margin-bottom: 40px; display: flex; align-items: center; gap: 12px; font-size: 20px; }
+        .nav-item { padding: 12px 18px; color: var(--text); cursor: pointer; border-radius: 10px; margin-bottom: 10px; display: flex; align-items: center; gap: 12px; font-size: 14px; transition: 0.3s; }
+        .nav-item:hover, .nav-item.active { background: #1e293b; color: var(--primary); }
 
-        label { display: block; font-size: 12px; color: var(--text); margin-bottom: 8px; }
-        input, select, textarea { 
-            width: 100%; padding: 12px; background: var(--bg); border: 1px solid var(--border); 
-            color: white; border-radius: 8px; margin-bottom: 15px; box-sizing: border-box; outline: none;
-        }
-        textarea { font-family: monospace; color: var(--success); }
+        /* Main Area */
+        .main { margin-left: 260px; padding: 40px; width: calc(100% - 260px); height: 100vh; overflow-y: auto; display: none; box-sizing: border-box; }
+        .tab-content { display: none; animation: fadeIn 0.3s ease; }
+        .tab-content.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        .theme-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; }
-        .theme-opt { padding: 8px; border-radius: 8px; border: 1px solid var(--border); text-align: center; font-size: 12px; cursor: pointer; background: var(--bg); }
-        .theme-opt.active { border-color: var(--primary); background: rgba(0,210,255,0.1); color: var(--primary); }
+        /* Cards and Inputs */
+        .grid { display: grid; grid-template-columns: 1.2fr 1fr; gap: 25px; }
+        .card { background: var(--card); padding: 30px; border-radius: 24px; border: 1px solid var(--border); }
+        .card h3 { color: var(--primary); margin: 0 0 25px; display: flex; align-items: center; gap: 10px; font-size: 16px; }
+        label { display: block; font-size: 12px; color: var(--text); margin: 20px 0 8px; font-weight: 600; }
+        input, select, textarea { width: 100%; background: #0f1722; border: 1px solid var(--border); padding: 14px; border-radius: 12px; color: white; box-sizing: border-box; outline: none; font-size: 14px; }
+        input:focus { border-color: var(--primary); }
+        
+        /* Buttons */
+        .save-btn { background: var(--primary); color: #000; border: none; padding: 14px 30px; border-radius: 12px; font-weight: bold; cursor: pointer; margin-top: 25px; display: flex; align-items: center; gap: 10px; transition: 0.2s; }
+        .save-btn:hover { transform: translateY(-2px); opacity: 0.9; }
+        .logout-btn { background: none; border: none; color: #ff4d4d; cursor: pointer; margin-top: auto; padding: 15px; display: flex; align-items: center; gap: 10px; font-weight: bold; width: 100%; }
 
-        .save-btn { 
-            width: 100%; padding: 14px; background: var(--success); color: #000; border: none; 
-            border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 15px; transition: 0.3s;
-        }
-        .save-btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,255,136,0.2); }
-
-        .hidden { display: none; }
+        /* Status Toast */
+        #toast { position: fixed; top: 20px; right: 20px; background: var(--accent); color: #000; padding: 15px 25px; border-radius: 10px; font-weight: bold; display: none; z-index: 11000; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
     </style>
 </head>
 <body>
 
-    <div id="login-page">
-        <div class="login-card">
+    <div id="toast">Settings Updated!</div>
+
+    <div id="loginScreen">
+        <div class="login-box">
             <i class="fas fa-user-shield" style="font-size: 40px; color: var(--primary); margin-bottom: 15px;"></i>
-            <h2 style="margin: 0 0 10px;">Admin Login</h2>
-            <p style="color: var(--text); font-size: 12px; margin-bottom: 25px;">Enter credentials to access dashboard</p>
-            <input type="email" id="email" placeholder="Email Address">
-            <input type="password" id="password" placeholder="Password">
-            <button class="login-btn" onclick="handleLogin()">Login</button>
-            <p id="login-err" style="color: var(--accent); font-size: 12px; margin-top: 15px;"></p>
+            <h2>Admin Login</h2>
+            <input type="email" id="loginEmail" placeholder="Firebase Email">
+            <input type="password" id="loginPass" placeholder="Password">
+            <button class="save-btn" onclick="handleLogin()" style="width: 100%; justify-content: center;">Sign In</button>
+            <p id="loginError" style="color: #ff4d4d; font-size: 12px; margin-top: 15px;"></p>
         </div>
     </div>
 
-    <div class="sidebar" id="sidebar-ui" style="display: none;">
-        <div class="logo"><i class="fas fa-bolt"></i> CapCut Admin</div>
-        <ul class="nav-list">
-            <li class="nav-item active" onclick="showTab('appSettings', this)"><i class="fas fa-cog"></i> App Settings</li>
-            <li class="nav-item" onclick="showTab('adManagement', this)"><i class="fas fa-ad"></i> Ad Management</li>
-            <li class="nav-item"><i class="fas fa-history"></i> Update History</li>
-            <li class="nav-item"><i class="fas fa-eye"></i> View Site</li>
-        </ul>
-        <div class="logout-sec">
-            <button class="logout-btn" onclick="handleLogout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
-        </div>
+    <div class="sidebar" id="sidebarMenu" style="display: none;">
+        <div class="logo"><i class="fas fa-bolt" style="color: #ff0055;"></i> CAPCUT ADMIN</div>
+        <div class="nav-item active" onclick="openTab(event, 'appSettings')"><i class="fas fa-cog"></i> App Settings</div>
+        <div class="nav-item" onclick="openTab(event, 'adManagement')"><i class="fas fa-bullhorn"></i> Ad Management</div>
+        <a href="https://mamuntools.github.io/app-download/" target="_blank" class="nav-item" style="text-decoration:none;"><i class="fas fa-external-link-alt"></i> Visit Live Site</a>
+        <button class="logout-btn" onclick="auth.signOut()"><i class="fas fa-power-off"></i> Logout System</button>
     </div>
 
-    <div class="main-content" id="main-ui">
-        <div class="header">
-            <h2 id="tabTitle" style="margin:0;">App Settings</h2>
-            <div style="font-size: 14px; color: var(--text);"><i class="fas fa-circle" style="color: var(--success); font-size: 8px;"></i> System Online</div>
-        </div>
-
-        <div id="appSettings" class="tab-content">
+    <div class="main" id="panelMain">
+        
+        <div id="appSettings" class="tab-content active">
+            <h2 style="margin-bottom: 30px;">Application Settings</h2>
             <div class="grid">
                 <div class="card">
-                    <div class="card-title"><i class="fas fa-info-circle"></i> Basic Information</div>
+                    <h3><i class="fas fa-info-circle"></i> Basic Content</h3>
                     <label>App Name</label>
-                    <input type="text" id="appName" placeholder="e.g. Canva Pro">
-                    
+                    <input type="text" id="appName" placeholder="e.g. CapCut Pro">
                     <label>App Icon URL</label>
-                    <input type="text" id="appIcon" placeholder="https://link.com/icon.png">
-                    
-                    <label>App Size (MB)</label>
+                    <input type="text" id="appIcon" placeholder="https://link.to/icon.png">
+                    <label>App Size</label>
                     <input type="text" id="appSize" placeholder="e.g. 150 MB">
-                    
-                    <label>Download Link (Main)</label>
-                    <input type="text" id="downloadLink" placeholder="https://apk-link.com">
+                    <label>Download Link</label>
+                    <input type="text" id="downloadLink" placeholder="https://your-file-link.com">
                 </div>
                 <div class="card">
-                    <div class="card-title"><i class="fas fa-magic"></i> UI & Appearance</div>
-                    <label>Select Background Theme</label>
-                    <div class="theme-grid">
-                        <div class="theme-opt active">Cosmic</div>
-                        <div class="theme-opt">Neon</div>
-                        <div class="theme-opt">Matrix</div>
-                    </div>
-                    <label>Total Ads to Unlock</label>
-                    <select id="totalAds">
-                        <option value="1">1 Ad</option>
-                        <option value="2">2 Ads</option>
-                        <option value="3">3 Ads</option>
-                    </select>
-                    <button class="save-btn" onclick="saveData()"><i class="fas fa-save"></i> Save All Changes</button>
+                    <h3><i class="fas fa-save"></i> Save Actions</h3>
+                    <p style="font-size: 13px; color: var(--text);">Changes will be live instantly on the offer page once you click save.</p>
+                    <button class="save-btn" onclick="saveData()"><i class="fas fa-cloud-upload-alt"></i> Save All Changes</button>
                 </div>
             </div>
         </div>
 
-        <div id="adManagement" class="tab-content hidden">
-            <div class="card">
-                <div class="card-title"><i class="fas fa-code"></i> Monetization Engine</div>
-                <label>Direct Ad Link / Script Code</label>
-                <textarea id="adLink" rows="10" placeholder="Paste your script or ad URL here..."></textarea>
-                <button class="save-btn" onclick="saveData()">Update Ad Link</button>
+        <div id="adManagement" class="tab-content">
+            <h2 style="margin-bottom: 30px;">Monetization & Ads</h2>
+            <div class="card" style="max-width: 700px;">
+                <h3><i class="fas fa-ad"></i> Ad Engine Control</h3>
+                <label>Direct Ad Link (URL)</label>
+                <textarea id="adLink" rows="3" placeholder="Paste Adsterra or Monetag direct link..."></textarea>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div>
+                        <label>How many Ads?</label>
+                        <select id="totalAds">
+                            <option value="1">1 Ad</option>
+                            <option value="3">3 Ads</option>
+                            <option value="5">5 Ads</option>
+                            <option value="10">10 Ads</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label>Ad Timer (Seconds)</label>
+                        <select id="adTimer">
+                            <option value="5">5 Seconds</option>
+                            <option value="10">10 Seconds</option>
+                            <option value="15">15 Seconds</option>
+                            <option value="30">30 Seconds</option>
+                        </select>
+                    </div>
+                </div>
+                <button class="save-btn" onclick="saveData()" style="background: var(--accent);"><i class="fas fa-check-circle"></i> Update Ad Settings</button>
             </div>
         </div>
+
     </div>
 
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
@@ -168,6 +129,7 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
     <script>
+        // Your Firebase Configuration (Keep it safe)
         const firebaseConfig = {
             apiKey: "AIzaSyCPbYi4l4gXESVFDEf93n1nvKshUOxwwf0",
             authDomain: "my-admin-panel-a70cc.firebaseapp.com",
@@ -179,66 +141,85 @@
         const auth = firebase.auth();
         const db = firebase.database();
 
-        // লগইন লজিক
+        // 1. Tab Switching Function
+        function openTab(evt, tabName) {
+            const contents = document.getElementsByClassName("tab-content");
+            for (let content of contents) content.classList.remove("active");
+            
+            const navItems = document.getElementsByClassName("nav-item");
+            for (let item of navItems) item.classList.remove("active");
+            
+            document.getElementById(tabName).classList.add("active");
+            evt.currentTarget.classList.add("active");
+        }
+
+        // 2. Enhanced Login Function
         function handleLogin() {
-            const email = document.getElementById('email').value;
-            const pass = document.getElementById('password').value;
-            auth.signInWithEmailAndPassword(email, pass).catch(err => {
-                document.getElementById('login-err').innerText = "Invalid credentials!";
+            const email = document.getElementById('loginEmail').value.trim();
+            const pass = document.getElementById('loginPass').value.trim();
+            const errorText = document.getElementById('loginError');
+            
+            if(!email || !pass) {
+                errorText.innerText = "Please enter both email and password.";
+                return;
+            }
+
+            auth.signInWithEmailAndPassword(email, pass)
+            .catch(error => {
+                errorText.innerText = "Error: " + error.message;
             });
         }
 
-        // অথেনটিকেশন স্টেট চেক
+        // 3. Auth Observer (Handles login state)
         auth.onAuthStateChanged(user => {
             if (user) {
-                document.getElementById('login-page').style.display = 'none';
-                document.getElementById('sidebar-ui').style.display = 'flex';
-                document.getElementById('main-ui').style.display = 'block';
+                document.getElementById('loginScreen').style.display = 'none';
+                document.getElementById('panelMain').style.display = 'block';
+                document.getElementById('sidebarMenu').style.display = 'block';
                 loadData();
             } else {
-                document.getElementById('login-page').style.display = 'flex';
-                document.getElementById('sidebar-ui').style.display = 'none';
-                document.getElementById('main-ui').style.display = 'none';
+                document.getElementById('loginScreen').style.display = 'flex';
+                document.getElementById('panelMain').style.display = 'none';
+                document.getElementById('sidebarMenu').style.display = 'none';
             }
         });
 
-        // ট্যাব সুইচিং
-        function showTab(id, el) {
-            document.querySelectorAll('.tab-content').forEach(t => t.classList.add('hidden'));
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            document.getElementById(id).classList.remove('hidden');
-            el.classList.add('active');
-            document.getElementById('tabTitle').innerText = (id === 'appSettings') ? 'App Settings' : 'Ad Management';
-        }
-
-        // ডাটা লোড ও সেভ
-        function loadData() {
-            db.ref('appSettings').once('value', snap => {
-                const d = snap.val();
-                if(d) {
-                    document.getElementById('appName').value = d.appName || "";
-                    document.getElementById('appIcon').value = d.appIcon || "";
-                    document.getElementById('appSize').value = d.appSize || "";
-                    document.getElementById('downloadLink').value = d.downloadLink || "";
-                    document.getElementById('adLink').value = d.adLink || "";
-                    document.getElementById('totalAds').value = d.totalAds || "2";
-                }
-            });
-        }
-
+        // 4. Data Save Function
         function saveData() {
-            const update = {
+            const data = {
                 appName: document.getElementById('appName').value,
                 appIcon: document.getElementById('appIcon').value,
                 appSize: document.getElementById('appSize').value,
                 downloadLink: document.getElementById('downloadLink').value,
                 adLink: document.getElementById('adLink').value,
-                totalAds: document.getElementById('totalAds').value
+                totalAds: document.getElementById('totalAds').value,
+                adTimer: document.getElementById('adTimer').value
             };
-            db.ref('appSettings').update(update).then(() => alert("Saved Successfully!"));
+
+            db.ref('appSettings').set(data)
+            .then(() => {
+                const toast = document.getElementById('toast');
+                toast.style.display = 'block';
+                setTimeout(() => toast.style.display = 'none', 3000);
+            })
+            .catch(err => alert("Database Error: " + err.message));
         }
 
-        function handleLogout() { auth.signOut(); }
+        // 5. Data Load Function
+        function loadData() {
+            db.ref('appSettings').on('value', (snap) => {
+                const val = snap.val();
+                if(val) {
+                    document.getElementById('appName').value = val.appName || "";
+                    document.getElementById('appIcon').value = val.appIcon || "";
+                    document.getElementById('appSize').value = val.appSize || "";
+                    document.getElementById('downloadLink').value = val.downloadLink || "";
+                    document.getElementById('adLink').value = val.adLink || "";
+                    document.getElementById('totalAds').value = val.totalAds || "1";
+                    document.getElementById('adTimer').value = val.adTimer || "10";
+                }
+            });
+        }
     </script>
 </body>
 </html>
