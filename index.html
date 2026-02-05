@@ -3,45 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CapCut Admin - Final Version</title>
+    <title>CapCut Admin - Multi-Ad Version</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root { --bg: #0b0e14; --sidebar: #11141d; --card: #161d29; --primary: #00d2ff; --accent: #00ff88; --text: #94a3b8; --border: #232d3d; }
         body { background: var(--bg); color: white; font-family: 'Inter', sans-serif; margin: 0; display: flex; height: 100vh; overflow: hidden; }
         
-        /* Login Screen Overlay */
         #loginScreen { position: fixed; inset: 0; background: var(--bg); z-index: 10000; display: flex; justify-content: center; align-items: center; }
         .login-box { background: var(--card); padding: 40px; border-radius: 20px; width: 350px; text-align: center; border: 1px solid var(--border); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         .login-box h2 { color: var(--primary); margin-bottom: 25px; }
         .login-box input { width: 100%; background: #0f1722; border: 1px solid var(--border); padding: 14px; border-radius: 12px; color: white; margin-bottom: 15px; outline: none; box-sizing: border-box; }
         
-        /* Sidebar */
         .sidebar { width: 260px; background: var(--sidebar); height: 100vh; padding: 25px; border-right: 1px solid var(--border); position: fixed; }
         .logo { color: #ff0055; font-weight: bold; margin-bottom: 40px; display: flex; align-items: center; gap: 12px; font-size: 20px; }
         .nav-item { padding: 12px 18px; color: var(--text); cursor: pointer; border-radius: 10px; margin-bottom: 10px; display: flex; align-items: center; gap: 12px; font-size: 14px; transition: 0.3s; }
         .nav-item:hover, .nav-item.active { background: #1e293b; color: var(--primary); }
 
-        /* Main Area */
         .main { margin-left: 260px; padding: 40px; width: calc(100% - 260px); height: 100vh; overflow-y: auto; display: none; box-sizing: border-box; }
         .tab-content { display: none; animation: fadeIn 0.3s ease; }
         .tab-content.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* Cards and Inputs */
         .grid { display: grid; grid-template-columns: 1.2fr 1fr; gap: 25px; }
-        .card { background: var(--card); padding: 30px; border-radius: 24px; border: 1px solid var(--border); }
-        .card h3 { color: var(--primary); margin: 0 0 25px; display: flex; align-items: center; gap: 10px; font-size: 16px; }
-        label { display: block; font-size: 12px; color: var(--text); margin: 20px 0 8px; font-weight: 600; }
+        .card { background: var(--card); padding: 30px; border-radius: 24px; border: 1px solid var(--border); margin-bottom: 20px; }
+        .card h3 { color: var(--primary); margin: 0 0 20px; display: flex; align-items: center; gap: 10px; font-size: 16px; }
+        label { display: block; font-size: 12px; color: var(--text); margin: 15px 0 8px; font-weight: 600; }
         input, select, textarea { width: 100%; background: #0f1722; border: 1px solid var(--border); padding: 14px; border-radius: 12px; color: white; box-sizing: border-box; outline: none; font-size: 14px; }
-        input:focus { border-color: var(--primary); }
+        input:focus, textarea:focus { border-color: var(--primary); }
         
-        /* Buttons */
         .save-btn { background: var(--primary); color: #000; border: none; padding: 14px 30px; border-radius: 12px; font-weight: bold; cursor: pointer; margin-top: 25px; display: flex; align-items: center; gap: 10px; transition: 0.2s; }
         .save-btn:hover { transform: translateY(-2px); opacity: 0.9; }
         .logout-btn { background: none; border: none; color: #ff4d4d; cursor: pointer; margin-top: auto; padding: 15px; display: flex; align-items: center; gap: 10px; font-weight: bold; width: 100%; }
 
-        /* Status Toast */
         #toast { position: fixed; top: 20px; right: 20px; background: var(--accent); color: #000; padding: 15px 25px; border-radius: 10px; font-weight: bold; display: none; z-index: 11000; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
+        
+        /* Multi-Ad Box Styling */
+        .ad-box { background: rgba(0, 210, 255, 0.05); padding: 15px; border-radius: 15px; border: 1px solid rgba(0, 210, 255, 0.1); margin-bottom: 10px; }
     </style>
 </head>
 <body>
@@ -52,7 +49,7 @@
         <div class="login-box">
             <i class="fas fa-user-shield" style="font-size: 40px; color: var(--primary); margin-bottom: 15px;"></i>
             <h2>Admin Login</h2>
-            <input type="email" id="loginEmail" placeholder="Firebase Email">
+            <input type="email" id="loginEmail" placeholder="Email">
             <input type="password" id="loginPass" placeholder="Password">
             <button class="save-btn" onclick="handleLogin()" style="width: 100%; justify-content: center;">Sign In</button>
             <p id="loginError" style="color: #ff4d4d; font-size: 12px; margin-top: 15px;"></p>
@@ -63,7 +60,6 @@
         <div class="logo"><i class="fas fa-bolt" style="color: #ff0055;"></i> CAPCUT ADMIN</div>
         <div class="nav-item active" onclick="openTab(event, 'appSettings')"><i class="fas fa-cog"></i> App Settings</div>
         <div class="nav-item" onclick="openTab(event, 'adManagement')"><i class="fas fa-bullhorn"></i> Ad Management</div>
-        <a href="https://mamuntools.github.io/app-download/" target="_blank" class="nav-item" style="text-decoration:none;"><i class="fas fa-external-link-alt"></i> Visit Live Site</a>
         <button class="logout-btn" onclick="auth.signOut()"><i class="fas fa-power-off"></i> Logout System</button>
     </div>
 
@@ -75,17 +71,16 @@
                 <div class="card">
                     <h3><i class="fas fa-info-circle"></i> Basic Content</h3>
                     <label>App Name</label>
-                    <input type="text" id="appName" placeholder="e.g. CapCut Pro">
+                    <input type="text" id="appName">
                     <label>App Icon URL</label>
-                    <input type="text" id="appIcon" placeholder="https://link.to/icon.png">
+                    <input type="text" id="appIcon">
                     <label>App Size</label>
-                    <input type="text" id="appSize" placeholder="e.g. 150 MB">
+                    <input type="text" id="appSize">
                     <label>Download Link</label>
-                    <input type="text" id="downloadLink" placeholder="https://your-file-link.com">
+                    <input type="text" id="downloadLink">
                 </div>
                 <div class="card">
                     <h3><i class="fas fa-save"></i> Save Actions</h3>
-                    <p style="font-size: 13px; color: var(--text);">Changes will be live instantly on the offer page once you click save.</p>
                     <button class="save-btn" onclick="saveData()"><i class="fas fa-cloud-upload-alt"></i> Save All Changes</button>
                 </div>
             </div>
@@ -93,32 +88,40 @@
 
         <div id="adManagement" class="tab-content">
             <h2 style="margin-bottom: 30px;">Monetization & Ads</h2>
-            <div class="card" style="max-width: 700px;">
-                <h3><i class="fas fa-ad"></i> Ad Engine Control</h3>
-                <label>Direct Ad Link (URL)</label>
-                <textarea id="adLink" rows="3" placeholder="Paste Adsterra or Monetag direct link..."></textarea>
-
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-                    <div>
-                        <label>How many Ads?</label>
-                        <select id="totalAds">
-                            <option value="1">1 Ad</option>
-                            <option value="3">3 Ads</option>
-                            <option value="5">5 Ads</option>
-                            <option value="10">10 Ads</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label>Ad Timer (Seconds)</label>
-                        <select id="adTimer">
-                            <option value="5">5 Seconds</option>
-                            <option value="10">10 Seconds</option>
-                            <option value="15">15 Seconds</option>
-                            <option value="30">30 Seconds</option>
-                        </select>
-                    </div>
+            <div class="grid">
+                <div class="card">
+                    <h3><i class="fas fa-ad"></i> Ad Direct Links</h3>
+                    <div class="ad-box"><label>Ad Link 1</label><input type="text" id="adL1" placeholder="Paste Direct Link 1"></div>
+                    <div class="ad-box"><label>Ad Link 2</label><input type="text" id="adL2" placeholder="Paste Direct Link 2"></div>
+                    <div class="ad-box"><label>Ad Link 3</label><input type="text" id="adL3" placeholder="Paste Direct Link 3"></div>
+                    <div class="ad-box"><label>Ad Link 4</label><input type="text" id="adL4" placeholder="Paste Direct Link 4"></div>
+                    <div class="ad-box"><label>Ad Link 5</label><input type="text" id="adL5" placeholder="Paste Direct Link 5"></div>
                 </div>
-                <button class="save-btn" onclick="saveData()" style="background: var(--accent);"><i class="fas fa-check-circle"></i> Update Ad Settings</button>
+                
+                <div class="card">
+                    <h3><i class="fas fa-stopwatch"></i> Control Settings</h3>
+                    <label>How many Ads to show?</label>
+                    <select id="totalAds">
+                        <option value="1">1 Ad</option>
+                        <option value="2">2 Ads</option>
+                        <option value="3">3 Ads</option>
+                        <option value="4">4 Ads</option>
+                        <option value="5">5 Ads</option>
+                    </select>
+
+                    <label>Wait Timer (Seconds)</label>
+                    <select id="adTimer">
+                        <option value="5">5 Seconds</option>
+                        <option value="10">10 Seconds</option>
+                        <option value="15">15 Seconds</option>
+                        <option value="20">20 Seconds</option>
+                        <option value="30">30 Seconds</option>
+                    </select>
+
+                    <button class="save-btn" onclick="saveData()" style="background: var(--accent); width: 100%; justify-content: center;">
+                        <i class="fas fa-check-circle"></i> Update Ad Engine
+                    </button>
+                </div>
             </div>
         </div>
 
@@ -129,7 +132,6 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
     <script>
-        // Your Firebase Configuration (Keep it safe)
         const firebaseConfig = {
             apiKey: "AIzaSyCPbYi4l4gXESVFDEf93n1nvKshUOxwwf0",
             authDomain: "my-admin-panel-a70cc.firebaseapp.com",
@@ -141,36 +143,22 @@
         const auth = firebase.auth();
         const db = firebase.database();
 
-        // 1. Tab Switching Function
         function openTab(evt, tabName) {
             const contents = document.getElementsByClassName("tab-content");
             for (let content of contents) content.classList.remove("active");
-            
             const navItems = document.getElementsByClassName("nav-item");
             for (let item of navItems) item.classList.remove("active");
-            
             document.getElementById(tabName).classList.add("active");
             evt.currentTarget.classList.add("active");
         }
 
-        // 2. Enhanced Login Function
         function handleLogin() {
             const email = document.getElementById('loginEmail').value.trim();
             const pass = document.getElementById('loginPass').value.trim();
             const errorText = document.getElementById('loginError');
-            
-            if(!email || !pass) {
-                errorText.innerText = "Please enter both email and password.";
-                return;
-            }
-
-            auth.signInWithEmailAndPassword(email, pass)
-            .catch(error => {
-                errorText.innerText = "Error: " + error.message;
-            });
+            auth.signInWithEmailAndPassword(email, pass).catch(error => { errorText.innerText = "Error: " + error.message; });
         }
 
-        // 3. Auth Observer (Handles login state)
         auth.onAuthStateChanged(user => {
             if (user) {
                 document.getElementById('loginScreen').style.display = 'none';
@@ -184,14 +172,17 @@
             }
         });
 
-        // 4. Data Save Function
         function saveData() {
             const data = {
                 appName: document.getElementById('appName').value,
                 appIcon: document.getElementById('appIcon').value,
                 appSize: document.getElementById('appSize').value,
                 downloadLink: document.getElementById('downloadLink').value,
-                adLink: document.getElementById('adLink').value,
+                adL1: document.getElementById('adL1').value,
+                adL2: document.getElementById('adL2').value,
+                adL3: document.getElementById('adL3').value,
+                adL4: document.getElementById('adL4').value,
+                adL5: document.getElementById('adL5').value,
                 totalAds: document.getElementById('totalAds').value,
                 adTimer: document.getElementById('adTimer').value
             };
@@ -205,7 +196,6 @@
             .catch(err => alert("Database Error: " + err.message));
         }
 
-        // 5. Data Load Function
         function loadData() {
             db.ref('appSettings').on('value', (snap) => {
                 const val = snap.val();
@@ -214,7 +204,11 @@
                     document.getElementById('appIcon').value = val.appIcon || "";
                     document.getElementById('appSize').value = val.appSize || "";
                     document.getElementById('downloadLink').value = val.downloadLink || "";
-                    document.getElementById('adLink').value = val.adLink || "";
+                    document.getElementById('adL1').value = val.adL1 || "";
+                    document.getElementById('adL2').value = val.adL2 || "";
+                    document.getElementById('adL3').value = val.adL3 || "";
+                    document.getElementById('adL4').value = val.adL4 || "";
+                    document.getElementById('adL5').value = val.adL5 || "";
                     document.getElementById('totalAds').value = val.totalAds || "1";
                     document.getElementById('adTimer').value = val.adTimer || "10";
                 }
