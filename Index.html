@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Admin Dashboard | CapCut Pro</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root { 
+            --bg: #0b0e14; 
+            --sidebar-bg: #0f131a; 
+            --card-bg: #161b22; 
+            --border: #21262d; 
+            --primary: #00d2ff; 
+            --accent: #ff0055; 
+            --text: #94a3b8; 
+            --success: #00ff88; 
+        }
+
+        body { margin: 0; font-family: 'Segoe UI', sans-serif; background: var(--bg); color: white; height: 100vh; display: flex; overflow: hidden; }
+
+        /* ১. লগইন পেজ ডিজাইন */
+        #login-page { 
+            position: fixed; inset: 0; background: radial-gradient(circle at top right, #1e293b, #0b0e14); 
+            display: flex; align-items: center; justify-content: center; z-index: 9999; 
+        }
+        .login-card { 
+            background: var(--card-bg); padding: 40px; border-radius: 20px; width: 340px; 
+            border: 1px solid var(--border); text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
+        .login-card input { 
+            width: 100%; padding: 12px; margin: 10px 0; border-radius: 8px; border: 1px solid var(--border); 
+            background: var(--bg); color: white; box-sizing: border-box; outline: none;
+        }
+        .login-btn { 
+            width: 100%; padding: 12px; background: var(--primary); border: none; border-radius: 8px; 
+            font-weight: bold; cursor: pointer; margin-top: 10px;
+        }
+
+        /* ২. সাইডবার ডিজাইন */
+        .sidebar { 
+            width: 250px; background: var(--sidebar-bg); border-right: 1px solid var(--border); 
+            display: flex; flex-direction: column; transition: 0.3s;
+        }
+        .logo { padding: 25px; font-size: 20px; font-weight: bold; color: var(--accent); display: flex; align-items: center; gap: 10px; }
+        .nav-list { list-style: none; padding: 0 15px; flex: 1; }
+        .nav-item { 
+            padding: 12px 15px; margin-bottom: 5px; border-radius: 10px; cursor: pointer; 
+            display: flex; align-items: center; gap: 12px; color: var(--text); transition: 0.3s; font-size: 14px;
+        }
+        .nav-item.active { background: #1c212c; color: var(--primary); border: 1px solid rgba(0,210,255,0.1); }
+        .nav-item:hover:not(.active) { background: rgba(255,255,255,0.05); color: white; }
+
+        .logout-sec { padding: 20px; border-top: 1px solid var(--border); }
+        .logout-btn { 
+            width: 100%; padding: 10px; border: 1px solid var(--accent); background: transparent; 
+            color: var(--accent); border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
+        }
+
+        /* ৩. মেইন কন্টেন্ট এরিয়া */
+        .main-content { flex: 1; padding: 30px; overflow-y: auto; display: none; }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; border-bottom: 1px solid var(--border); padding-bottom: 15px; }
+        
+        .grid { display: grid; grid-template-columns: 1.5fr 1fr; gap: 25px; }
+        .card { background: var(--card-bg); padding: 25px; border-radius: 18px; border: 1px solid var(--border); }
+        .card-title { color: var(--primary); font-weight: bold; margin-bottom: 20px; display: flex; align-items: center; gap: 8px; font-size: 15px; }
+
+        label { display: block; font-size: 12px; color: var(--text); margin-bottom: 8px; }
+        input, select, textarea { 
+            width: 100%; padding: 12px; background: var(--bg); border: 1px solid var(--border); 
+            color: white; border-radius: 8px; margin-bottom: 15px; box-sizing: border-box; outline: none;
+        }
+        textarea { font-family: monospace; color: var(--success); }
+
+        .theme-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; }
+        .theme-opt { padding: 8px; border-radius: 8px; border: 1px solid var(--border); text-align: center; font-size: 12px; cursor: pointer; background: var(--bg); }
+        .theme-opt.active { border-color: var(--primary); background: rgba(0,210,255,0.1); color: var(--primary); }
+
+        .save-btn { 
+            width: 100%; padding: 14px; background: var(--success); color: #000; border: none; 
+            border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 15px; transition: 0.3s;
+        }
+        .save-btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,255,136,0.2); }
+
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+
+    <div id="login-page">
+        <div class="login-card">
+            <i class="fas fa-user-shield" style="font-size: 40px; color: var(--primary); margin-bottom: 15px;"></i>
+            <h2 style="margin: 0 0 10px;">Admin Login</h2>
+            <p style="color: var(--text); font-size: 12px; margin-bottom: 25px;">Enter credentials to access dashboard</p>
+            <input type="email" id="email" placeholder="Email Address">
+            <input type="password" id="password" placeholder="Password">
+            <button class="login-btn" onclick="handleLogin()">Login</button>
+            <p id="login-err" style="color: var(--accent); font-size: 12px; margin-top: 15px;"></p>
+        </div>
+    </div>
+
+    <div class="sidebar" id="sidebar-ui" style="display: none;">
+        <div class="logo"><i class="fas fa-bolt"></i> CapCut Admin</div>
+        <ul class="nav-list">
+            <li class="nav-item active" onclick="showTab('appSettings', this)"><i class="fas fa-cog"></i> App Settings</li>
+            <li class="nav-item" onclick="showTab('adManagement', this)"><i class="fas fa-ad"></i> Ad Management</li>
+            <li class="nav-item"><i class="fas fa-history"></i> Update History</li>
+            <li class="nav-item"><i class="fas fa-eye"></i> View Site</li>
+        </ul>
+        <div class="logout-sec">
+            <button class="logout-btn" onclick="handleLogout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+        </div>
+    </div>
+
+    <div class="main-content" id="main-ui">
+        <div class="header">
+            <h2 id="tabTitle" style="margin:0;">App Settings</h2>
+            <div style="font-size: 14px; color: var(--text);"><i class="fas fa-circle" style="color: var(--success); font-size: 8px;"></i> System Online</div>
+        </div>
+
+        <div id="appSettings" class="tab-content">
+            <div class="grid">
+                <div class="card">
+                    <div class="card-title"><i class="fas fa-info-circle"></i> Basic Information</div>
+                    <label>App Name</label>
+                    <input type="text" id="appName" placeholder="e.g. Canva Pro">
+                    
+                    <label>App Icon URL</label>
+                    <input type="text" id="appIcon" placeholder="https://link.com/icon.png">
+                    
+                    <label>App Size (MB)</label>
+                    <input type="text" id="appSize" placeholder="e.g. 150 MB">
+                    
+                    <label>Download Link (Main)</label>
+                    <input type="text" id="downloadLink" placeholder="https://apk-link.com">
+                </div>
+                <div class="card">
+                    <div class="card-title"><i class="fas fa-magic"></i> UI & Appearance</div>
+                    <label>Select Background Theme</label>
+                    <div class="theme-grid">
+                        <div class="theme-opt active">Cosmic</div>
+                        <div class="theme-opt">Neon</div>
+                        <div class="theme-opt">Matrix</div>
+                    </div>
+                    <label>Total Ads to Unlock</label>
+                    <select id="totalAds">
+                        <option value="1">1 Ad</option>
+                        <option value="2">2 Ads</option>
+                        <option value="3">3 Ads</option>
+                    </select>
+                    <button class="save-btn" onclick="saveData()"><i class="fas fa-save"></i> Save All Changes</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="adManagement" class="tab-content hidden">
+            <div class="card">
+                <div class="card-title"><i class="fas fa-code"></i> Monetization Engine</div>
+                <label>Direct Ad Link / Script Code</label>
+                <textarea id="adLink" rows="10" placeholder="Paste your script or ad URL here..."></textarea>
+                <button class="save-btn" onclick="saveData()">Update Ad Link</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyCPbYi4l4gXESVFDEf93n1nvKshUOxwwf0",
+            authDomain: "my-admin-panel-a70cc.firebaseapp.com",
+            databaseURL: "https://my-admin-panel-a70cc-default-rtdb.firebaseio.com",
+            projectId: "my-admin-panel-a70cc",
+            appId: "1:992979831424:web:ba765f5bb23db644693465"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.database();
+
+        // লগইন লজিক
+        function handleLogin() {
+            const email = document.getElementById('email').value;
+            const pass = document.getElementById('password').value;
+            auth.signInWithEmailAndPassword(email, pass).catch(err => {
+                document.getElementById('login-err').innerText = "Invalid credentials!";
+            });
+        }
+
+        // অথেনটিকেশন স্টেট চেক
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                document.getElementById('login-page').style.display = 'none';
+                document.getElementById('sidebar-ui').style.display = 'flex';
+                document.getElementById('main-ui').style.display = 'block';
+                loadData();
+            } else {
+                document.getElementById('login-page').style.display = 'flex';
+                document.getElementById('sidebar-ui').style.display = 'none';
+                document.getElementById('main-ui').style.display = 'none';
+            }
+        });
+
+        // ট্যাব সুইচিং
+        function showTab(id, el) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.add('hidden'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            document.getElementById(id).classList.remove('hidden');
+            el.classList.add('active');
+            document.getElementById('tabTitle').innerText = (id === 'appSettings') ? 'App Settings' : 'Ad Management';
+        }
+
+        // ডাটা লোড ও সেভ
+        function loadData() {
+            db.ref('appSettings').once('value', snap => {
+                const d = snap.val();
+                if(d) {
+                    document.getElementById('appName').value = d.appName || "";
+                    document.getElementById('appIcon').value = d.appIcon || "";
+                    document.getElementById('appSize').value = d.appSize || "";
+                    document.getElementById('downloadLink').value = d.downloadLink || "";
+                    document.getElementById('adLink').value = d.adLink || "";
+                    document.getElementById('totalAds').value = d.totalAds || "2";
+                }
+            });
+        }
+
+        function saveData() {
+            const update = {
+                appName: document.getElementById('appName').value,
+                appIcon: document.getElementById('appIcon').value,
+                appSize: document.getElementById('appSize').value,
+                downloadLink: document.getElementById('downloadLink').value,
+                adLink: document.getElementById('adLink').value,
+                totalAds: document.getElementById('totalAds').value
+            };
+            db.ref('appSettings').update(update).then(() => alert("Saved Successfully!"));
+        }
+
+        function handleLogout() { auth.signOut(); }
+    </script>
+</body>
+</html>
